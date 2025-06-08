@@ -59,7 +59,7 @@ const Index = () => {
   // Transform habits data for components
   const transformedHabits = habits.map(habit => {
     const today = getTodayDateString();
-    const todaysCompletions = habit.completions?.filter(c => c.date === today).length || 0;
+    const todaysCompletions = habit.completions?.filter(c => c.date === today) || [];
     const completedDates = habit.completions?.map(c => c.date) || [];
     
     return {
@@ -70,11 +70,12 @@ const Index = () => {
       color: habit.color,
       dailyGoal: habit.daily_goal,
       timeOfDay: habit.time_of_day,
-      completedToday: todaysCompletions,
+      completedToday: todaysCompletions.length,
       completedDates,
       currentStreak: habit.current_streak,
       bestStreak: habit.best_streak,
-      createdAt: habit.created_at
+      createdAt: habit.created_at,
+      completions: habit.completions || []
     };
   });
 

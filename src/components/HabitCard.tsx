@@ -17,6 +17,12 @@ interface Habit {
   dailyGoal: number;
   timeOfDay: string;
   completedToday: number;
+  completions: Array<{
+    id: string;
+    habit_id: string;
+    date: string;
+    completed_at: string;
+  }>;
 }
 
 interface HabitCardProps {
@@ -31,8 +37,8 @@ const HabitCard: React.FC<HabitCardProps> = ({ habit, onToggleCompletion, onRemo
   const { t } = useLanguage();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const today = getTodayDateString();
-  const todaysCompletions = habit.completedDates.filter(date => date === today).length;
-  const isGoalReached = todaysCompletions >= habit.dailyGoal;
+  const todaysCompletions = habit.completions.filter(c => c.date === today);
+  const isGoalReached = todaysCompletions.length >= habit.dailyGoal;
 
   const getWeekProgress = () => {
     const today = new Date();
@@ -42,11 +48,12 @@ const HabitCard: React.FC<HabitCardProps> = ({ habit, onToggleCompletion, onRemo
       const date = new Date(today);
       date.setDate(date.getDate() - i);
       const dateString = formatDateString(date.toISOString());
-      const dayCompletions = habit.completedDates.filter(d => d === dateString).length;
+      const dayCompletions = habit.completions.filter(c => c.date === dateString);
       weekDays.push({
         date: dateString,
-        completed: dayCompletions >= habit.dailyGoal,
-        progress: Math.min(dayCompletions / habit.dailyGoal, 1)
+        completed: dayCompletions.length >= habit.dailyGoal,
+        progress: Math.min(dayCompletions.length / habit.dailyGoal, 1),
+        completions: dayCompletions
       });
     }
     
@@ -128,16 +135,16 @@ const HabitCard: React.FC<HabitCardProps> = ({ habit, onToggleCompletion, onRemo
           <div className="mb-3 sm:mb-4">
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
-                {t('dailyGoal')}: {todaysCompletions}/{habit.dailyGoal}
+                {t('dailyGoal')}: {todaysCompletions.length}/{habit.dailyGoal}
               </span>
               <span className="text-xs text-gray-600 dark:text-gray-400">
-                {Math.round((todaysCompletions / habit.dailyGoal) * 100)}%
+                {Math.round((todaysCompletions.length / habit.dailyGoal) * 100)}%
               </span>
             </div>
             <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
               <div
                 className="bg-emerald-500 h-2 rounded-full transition-all duration-300"
-                style={{ width: `${Math.min((todaysCompletions / habit.dailyGoal) * 100, 100)}%` }}
+                style={{ width: `${Math.min((todaysCompletions.length / habit.dailyGoal) * 100, 100)}%` }}
               />
             </div>
           </div>
@@ -147,7 +154,7 @@ const HabitCard: React.FC<HabitCardProps> = ({ habit, onToggleCompletion, onRemo
         <div className="mb-3 sm:mb-4">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">{t('weekProgress')}</span>
-            <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">{completionRate}/7</span>
+            <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">{weekProgress.filter(day => day.completed).length}/7</span>
           </div>
           <div className="flex space-x-1">
             {weekProgress.map((day, index) => (
@@ -156,6 +163,7 @@ const HabitCard: React.FC<HabitCardProps> = ({ habit, onToggleCompletion, onRemo
                   className={`h-2 rounded-full transition-colors ${
                     day.completed ? 'bg-emerald-500' : 'bg-gray-200 dark:bg-gray-600'
                   }`}
+                  title={day.completions.length > 0 ? `${t('completedAt')}: ${new Date(day.completions[0].completed_at).toLocaleTimeString()}` : ''}
                 />
                 {habit.dailyGoal > 1 && !day.completed && day.progress > 0 && (
                   <div
@@ -193,14 +201,16 @@ const HabitCard: React.FC<HabitCardProps> = ({ habit, onToggleCompletion, onRemo
             <Check className={`h-3 w-3 sm:h-4 sm:w-4 md:h-5 md:w-5 ${isGoalReached ? 'text-white' : 'text-gray-500 dark:text-gray-400'}`} />
             <span className="hidden sm:inline">
               {isGoalReached 
-                ? (habit.dailyGoal === 1 ? t('completedToday') : `${t('completedTimes')} (${todaysCompletions}/${habit.dailyGoal})`)
-                : (habit.dailyGoal === 1 ? t('markCompleted') : `${t('markCompleted')} (${todaysCompletions}/${habit.dailyGoal})`)
+                ? (habit.dailyGoal === 1 
+                  ? `${t('completedAt')} ${new Date(todaysCompletions[0].completed_at).toLocaleTimeString()}`
+                  : `${t('completedTimes')} (${todaysCompletions.length}/${habit.dailyGoal})`)
+                : (habit.dailyGoal === 1 ? t('markCompleted') : `${t('markCompleted')} (${todaysCompletions.length}/${habit.dailyGoal})`)
               }
             </span>
             <span className="sm:hidden">+</span>
           </button>
           
-          {todaysCompletions > 0 && (
+          {todaysCompletions.length > 0 && (
             <button
               onClick={() => onRemoveCompletion(habit.id)}
               className="px-3 sm:px-4 py-2 sm:py-2.5 md:py-3 rounded-xl font-medium transition-all duration-200 flex items-center justify-center bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/30 border-2 border-dashed border-red-300 dark:border-red-600"

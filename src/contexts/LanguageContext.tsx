@@ -68,6 +68,7 @@ const translations = {
     completedToday: 'Выполнено сегодня',
     completedTimes: 'Выполнено',
     markCompleted: 'Отметить выполненным',
+    completedAt: 'Выполнено в',
     // Forms
     habitName: 'Название привычки',
     habitNamePlaceholder: 'Введите название привычки',
@@ -159,6 +160,7 @@ const translations = {
     completedToday: 'Completed Today',
     completedTimes: 'Completed',
     markCompleted: 'Mark Completed',
+    completedAt: 'Completed at',
     // Forms
     habitName: 'Habit Name',
     habitNamePlaceholder: 'Enter habit name',
