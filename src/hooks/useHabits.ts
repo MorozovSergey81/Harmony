@@ -60,13 +60,18 @@ export const useHabits = () => {
         const newStreak = habit.current_streak + 1;
         const newBestStreak = Math.max(habit.best_streak, newStreak);
         
-        updateHabit(habitId, {
-          current_streak: newStreak,
-          best_streak: newBestStreak
-        });
+        setHabits(prev => prev.map(h => 
+          h.id === habitId 
+            ? { 
+                ...h, 
+                current_streak: newStreak,
+                best_streak: newBestStreak
+              } 
+            : h
+        ));
       }
     }
-  }, [habits, completions, setCompletions, updateHabit]);
+  }, [habits, completions, setCompletions, setHabits]);
 
   const removeHabitCompletion = useCallback(async (habitId: string) => {
     const today = getTodayDateString();
@@ -80,11 +85,16 @@ export const useHabits = () => {
     // Обновляем streak
     const habit = habits.find(h => h.id === habitId);
     if (habit && habit.current_streak > 0) {
-      updateHabit(habitId, {
-        current_streak: habit.current_streak - 1
-      });
+      setHabits(prev => prev.map(h => 
+        h.id === habitId 
+          ? { 
+              ...h, 
+              current_streak: h.current_streak - 1
+            } 
+          : h
+      ));
     }
-  }, [habits, setCompletions, updateHabit]);
+  }, [habits, setCompletions, setHabits]);
 
   const habitsWithCompletions = habits.map(habit => ({
     ...habit,
