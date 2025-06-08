@@ -164,6 +164,7 @@ const Index = () => {
       </main>
 
       <AddHabitModal
+        isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
         onAdd={handleAddHabit}
       />

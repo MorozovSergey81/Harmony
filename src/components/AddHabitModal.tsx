@@ -6,6 +6,7 @@ import type { Habit } from '../types';
 type NewHabit = Omit<Habit, 'id' | 'created_at' | 'current_streak' | 'best_streak'>;
 
 interface AddHabitModalProps {
+  isOpen: boolean;
   onClose: () => void;
   onAdd: (habit: NewHabit) => void;
 }
@@ -15,7 +16,7 @@ const colors = [
   '#EF4444', '#EC4899', '#14B8A6', '#F97316'
 ];
 
-const AddHabitModal: React.FC<AddHabitModalProps> = ({ onClose, onAdd }) => {
+const AddHabitModal: React.FC<AddHabitModalProps> = ({ isOpen, onClose, onAdd }) => {
   const { t } = useLanguage();
   
   const categories = [
@@ -60,6 +61,8 @@ const AddHabitModal: React.FC<AddHabitModalProps> = ({ onClose, onAdd }) => {
       });
     }
   };
+
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
