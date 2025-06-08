@@ -1,6 +1,108 @@
-# Harmony - Habit Tracking App
+# Harmony - Трекер привычек
 
-A modern habit tracking application built with React, TypeScript, and Tailwind CSS.
+Веб-приложение для отслеживания ежедневных привычек с поддержкой нескольких выполнений в день.
+
+## Деплой на Vercel
+
+1. Создайте аккаунт на [Vercel](https://vercel.com)
+
+2. Установите Vercel CLI:
+   ```bash
+   npm install -g vercel
+   ```
+
+3. Залогиньтесь в Vercel:
+   ```bash
+   vercel login
+   ```
+
+4. Создайте базу данных PostgreSQL:
+   - Зайдите на [Neon](https://neon.tech) или [Supabase](https://supabase.com)
+   - Создайте новый проект
+   - Получите строку подключения к базе данных
+
+5. Настройте переменные окружения в Vercel:
+   ```bash
+   vercel env add POSTGRES_USER
+   vercel env add POSTGRES_PASSWORD
+   vercel env add POSTGRES_HOST
+   vercel env add POSTGRES_PORT
+   vercel env add POSTGRES_DB
+   ```
+
+6. Деплой приложения:
+   ```bash
+   vercel
+   ```
+
+7. После успешного деплоя, ваше приложение будет доступно по адресу:
+   `https://your-app-name.vercel.app`
+
+## Настройка базы данных
+
+1. Установите PostgreSQL:
+   ```bash
+   # macOS (через Homebrew)
+   brew install postgresql
+
+   # Ubuntu/Debian
+   sudo apt update
+   sudo apt install postgresql postgresql-contrib
+   ```
+
+2. Создайте базу данных:
+   ```bash
+   # Войдите в PostgreSQL
+   psql postgres
+
+   # Создайте базу данных
+   CREATE DATABASE harmony;
+
+   # Подключитесь к базе данных
+   \c harmony
+   ```
+
+3. Примените миграции:
+   ```bash
+   # Скопируйте содержимое файла migrations/001_initial_schema.sql
+   # и выполните его в psql
+   ```
+
+4. Создайте файл .env в корне проекта:
+   ```
+   POSTGRES_USER=your_username
+   POSTGRES_PASSWORD=your_password
+   POSTGRES_HOST=localhost
+   POSTGRES_PORT=5432
+   POSTGRES_DB=harmony
+   ```
+
+## Установка и запуск
+
+1. Установите зависимости:
+   ```bash
+   npm install
+   ```
+
+2. Запустите приложение:
+   ```bash
+   npm run dev
+   ```
+
+## Основные функции
+
+- Создание и отслеживание привычек
+- Поддержка нескольких выполнений в день
+- Отслеживание серий выполнений
+- Статистика и календарь
+- Поддержка русского и английского языков
+
+## Технологии
+
+- React + TypeScript
+- PostgreSQL
+- Node.js
+- Tailwind CSS
 
 ## 🌐 Live Demo
 
@@ -21,24 +123,6 @@ Visit the live application at: [https://morozovSergey81.github.io/Harmony/](http
 - Vite
 - React Router
 - GitHub Actions for CI/CD
-
-## 📦 Installation
-
-1. Clone the repository:
-```bash
-git clone https://github.com/MorozovSergey81/Harmony.git
-cd Harmony
-```
-
-2. Install dependencies:
-```bash
-npm install
-```
-
-3. Start the development server:
-```bash
-npm run dev
-```
 
 ## 🔨 Available Scripts
 
