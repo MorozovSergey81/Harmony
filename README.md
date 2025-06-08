@@ -1,43 +1,64 @@
-# Harmony
+# Harmony - Habit Tracking App
 
 A modern habit tracking application built with React, TypeScript, and Tailwind CSS.
 
-## Features
+## 🌐 Live Demo
 
-- Track daily habits and goals
-- Visual calendar view
-- Statistics overview
-- Dark/Light theme support
-- Internationalization support
-- Modern UI components using Radix UI
+Visit the live application at: [https://morozovSergey81.github.io/Harmony/](https://morozovSergey81.github.io/Harmony/)
 
-## Tech Stack
+## 🚀 Features
 
-- React
+- Track daily habits and routines
+- Beautiful and responsive UI
+- Modern design with Tailwind CSS
+- Type-safe development with TypeScript
+
+## 🛠️ Tech Stack
+
+- React 18
 - TypeScript
 - Tailwind CSS
-- Radix UI Components
+- Vite
 - React Router
-- React Hook Form
-- Recharts for data visualization
+- GitHub Actions for CI/CD
 
-## Getting Started
+## 📦 Installation
 
-1. Clone the repository
+1. Clone the repository:
 ```bash
 git clone https://github.com/MorozovSergey81/Harmony.git
+cd Harmony
 ```
 
-2. Install dependencies
+2. Install dependencies:
 ```bash
 npm install
 ```
 
-3. Start the development server
+3. Start the development server:
 ```bash
 npm run dev
 ```
 
-## Contributing
+## 🔨 Available Scripts
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build
+- `npm run test` - Run tests
+- `npm run typecheck` - Check TypeScript types
+- `npm run lint` - Run ESLint
+
+## 🚀 Deployment
+
+The application is automatically deployed to GitHub Pages when changes are pushed to the main branch. The deployment process includes:
+
+1. Type checking
+2. Building the application
+3. Deploying to GitHub Pages
+
+You can check the deployment status in the [Actions tab](https://github.com/MorozovSergey81/Harmony/actions).
+
+## 📝 License
+
+MIT
