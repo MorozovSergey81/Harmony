@@ -62,6 +62,7 @@ const translations = {
     allTime: 'за все время',
     day: 'день',
     days: 'дней',
+    weekProgress: 'Прогресс недели',
     // Habit Card
     streak: 'Серия',
     daysCount: 'дней',
@@ -154,6 +155,7 @@ const translations = {
     allTime: 'all time',
     day: 'day',
     days: 'days',
+    weekProgress: 'Week Progress',
     // Habit Card
     streak: 'Streak',
     daysCount: 'days',
