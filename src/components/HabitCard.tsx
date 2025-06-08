@@ -189,7 +189,7 @@ const HabitCard: React.FC<HabitCardProps> = ({ habit, onToggleCompletion, onRemo
                 : t('markCompleted')}
             </span>
           </button>
-          {isGoalReached && habit.daily_goal === 1 && (
+          {todaysCompletions.length > 0 && (
             <button
               onClick={() => onRemoveCompletion(habit.id)}
               className="py-2 sm:py-2.5 md:py-3 px-3 sm:px-4 rounded-xl font-medium bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/40 transition-colors"
