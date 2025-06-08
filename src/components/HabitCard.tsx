@@ -3,26 +3,10 @@ import { Check, Edit, Trash2, TrendingUp, Clock, Minus } from 'lucide-react';
 import EditHabitModal from './EditHabitModal';
 import { useLanguage } from '../contexts/LanguageContext';
 import { getTodayDateString, formatDateString } from '../utils/date';
+import type { Habit as BaseHabit, HabitCompletion } from '../types';
 
-interface Habit {
-  id: string;
-  title: string;
-  description?: string;
-  category: string;
-  color: string;
-  currentStreak: number;
-  bestStreak: number;
-  completedDates: string[];
-  createdAt: string;
-  dailyGoal: number;
-  timeOfDay: string;
-  completedToday: number;
-  completions: Array<{
-    id: string;
-    habit_id: string;
-    date: string;
-    completed_at: string;
-  }>;
+interface Habit extends BaseHabit {
+  completions: HabitCompletion[];
 }
 
 interface HabitCardProps {
@@ -30,7 +14,7 @@ interface HabitCardProps {
   onToggleCompletion: (id: string) => void;
   onRemoveCompletion: (id: string) => void;
   onDelete: (id: string) => void;
-  onUpdate: (id: string, updates: Partial<Habit>) => void;
+  onUpdate: (id: string, updates: Partial<BaseHabit>) => void;
 }
 
 const HabitCard: React.FC<HabitCardProps> = ({ habit, onToggleCompletion, onRemoveCompletion, onDelete, onUpdate }) => {
@@ -38,7 +22,7 @@ const HabitCard: React.FC<HabitCardProps> = ({ habit, onToggleCompletion, onRemo
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const today = getTodayDateString();
   const todaysCompletions = habit.completions.filter(c => c.date === today);
-  const isGoalReached = todaysCompletions.length >= habit.dailyGoal;
+  const isGoalReached = todaysCompletions.length >= habit.daily_goal;
 
   const getWeekProgress = () => {
     const today = new Date();
@@ -51,8 +35,8 @@ const HabitCard: React.FC<HabitCardProps> = ({ habit, onToggleCompletion, onRemo
       const dayCompletions = habit.completions.filter(c => c.date === dateString);
       weekDays.push({
         date: dateString,
-        completed: dayCompletions.length >= habit.dailyGoal,
-        progress: Math.min(dayCompletions.length / habit.dailyGoal, 1),
+        completed: dayCompletions.length >= habit.daily_goal,
+        progress: Math.min(dayCompletions.length / habit.daily_goal, 1),
         completions: dayCompletions
       });
     }
@@ -106,10 +90,10 @@ const HabitCard: React.FC<HabitCardProps> = ({ habit, onToggleCompletion, onRemo
               <span className="inline-block px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-xs rounded-full">
                 {getCategoryTranslation(habit.category)}
               </span>
-              {habit.timeOfDay !== 'anytime' && (
+              {habit.time_of_day !== 'anytime' && (
                 <span className="inline-flex items-center space-x-1 px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-xs rounded-full">
                   <Clock className="h-3 w-3" />
-                  <span>{getTimeOfDayTranslation(habit.timeOfDay)}</span>
+                  <span>{getTimeOfDayTranslation(habit.time_of_day)}</span>
                 </span>
               )}
             </div>
@@ -131,20 +115,20 @@ const HabitCard: React.FC<HabitCardProps> = ({ habit, onToggleCompletion, onRemo
         </div>
 
         {/* Daily Goal Progress */}
-        {habit.dailyGoal > 1 && (
+        {habit.daily_goal > 1 && (
           <div className="mb-3 sm:mb-4">
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
-                {t('dailyGoal')}: {todaysCompletions.length}/{habit.dailyGoal}
+                {t('dailyGoal')}: {todaysCompletions.length}/{habit.daily_goal}
               </span>
               <span className="text-xs text-gray-600 dark:text-gray-400">
-                {Math.round((todaysCompletions.length / habit.dailyGoal) * 100)}%
+                {Math.round((todaysCompletions.length / habit.daily_goal) * 100)}%
               </span>
             </div>
             <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
               <div
                 className="bg-emerald-500 h-2 rounded-full transition-all duration-300"
-                style={{ width: `${Math.min((todaysCompletions.length / habit.dailyGoal) * 100, 100)}%` }}
+                style={{ width: `${Math.min((todaysCompletions.length / habit.daily_goal) * 100, 100)}%` }}
               />
             </div>
           </div>
@@ -165,7 +149,7 @@ const HabitCard: React.FC<HabitCardProps> = ({ habit, onToggleCompletion, onRemo
                   }`}
                   title={day.completions.length > 0 ? `${t('completedAt')}: ${new Date(day.completions[0].completed_at).toLocaleTimeString()}` : ''}
                 />
-                {habit.dailyGoal > 1 && !day.completed && day.progress > 0 && (
+                {habit.daily_goal > 1 && !day.completed && day.progress > 0 && (
                   <div
                     className="h-1 bg-emerald-300 dark:bg-emerald-600 rounded-full"
                     style={{ width: `${day.progress * 100}%` }}
@@ -183,7 +167,7 @@ const HabitCard: React.FC<HabitCardProps> = ({ habit, onToggleCompletion, onRemo
             <span className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">{t('streak')}</span>
           </div>
           <span className="font-bold text-emerald-600 dark:text-emerald-400 text-sm sm:text-base md:text-lg">
-            {habit.currentStreak} {t('daysCount')}
+            {habit.current_streak} {t('daysCount')}
           </span>
         </div>
 
@@ -198,24 +182,19 @@ const HabitCard: React.FC<HabitCardProps> = ({ habit, onToggleCompletion, onRemo
                 : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:text-emerald-700 dark:hover:text-emerald-400 border-2 border-dashed border-gray-300 dark:border-gray-600 hover:border-emerald-300 dark:hover:border-emerald-500'
             }`}
           >
-            <Check className={`h-3 w-3 sm:h-4 sm:w-4 md:h-5 md:w-5 ${isGoalReached ? 'text-white' : 'text-gray-500 dark:text-gray-400'}`} />
-            <span className="hidden sm:inline">
+            <Check className="h-3 w-3 sm:h-4 sm:w-4" />
+            <span>
               {isGoalReached 
-                ? (habit.dailyGoal === 1 
-                  ? `${t('completedAt')} ${new Date(todaysCompletions[0].completed_at).toLocaleTimeString()}`
-                  : `${t('completedTimes')} (${todaysCompletions.length}/${habit.dailyGoal})`)
-                : (habit.dailyGoal === 1 ? t('markCompleted') : `${t('markCompleted')} (${todaysCompletions.length}/${habit.dailyGoal})`)
-              }
+                ? `${t('completedAt')} ${new Date(todaysCompletions[todaysCompletions.length - 1].completed_at).toLocaleTimeString()}`
+                : t('markCompleted')}
             </span>
-            <span className="sm:hidden">+</span>
           </button>
-          
-          {todaysCompletions.length > 0 && (
+          {isGoalReached && habit.daily_goal === 1 && (
             <button
               onClick={() => onRemoveCompletion(habit.id)}
-              className="px-3 sm:px-4 py-2 sm:py-2.5 md:py-3 rounded-xl font-medium transition-all duration-200 flex items-center justify-center bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/30 border-2 border-dashed border-red-300 dark:border-red-600"
+              className="py-2 sm:py-2.5 md:py-3 px-3 sm:px-4 rounded-xl font-medium bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/40 transition-colors"
             >
-              <Minus className="h-3 w-3 sm:h-4 sm:w-4 md:h-5 md:w-5" />
+              <Minus className="h-3 w-3 sm:h-4 sm:w-4" />
             </button>
           )}
         </div>
@@ -224,8 +203,8 @@ const HabitCard: React.FC<HabitCardProps> = ({ habit, onToggleCompletion, onRemo
       <EditHabitModal
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
-        habit={habit}
         onUpdate={onUpdate}
+        habit={habit}
       />
     </>
   );

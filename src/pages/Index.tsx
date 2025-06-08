@@ -9,13 +9,18 @@ import ThemeToggle from '../components/ThemeToggle';
 import LanguageSelector from '../components/LanguageSelector';
 import HabitCalendar from '../components/HabitCalendar';
 import { useLanguage } from '../contexts/LanguageContext';
+import type { Habit as BaseHabit, HabitCompletion } from '../types';
+
+interface Habit extends BaseHabit {
+  completions: HabitCompletion[];
+}
 
 const Index = () => {
   const { t } = useLanguage();
   const { habits, loading: habitsLoading, addHabit, updateHabit, deleteHabit, toggleHabitCompletion, removeHabitCompletion } = useHabits();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
-  const handleAddHabit = async (habitData: any) => {
+  const handleAddHabit = async (habitData: Omit<BaseHabit, 'id' | 'created_at' | 'current_streak' | 'best_streak'>) => {
     try {
       await addHabit(habitData);
       setIsAddModalOpen(false);
@@ -24,7 +29,7 @@ const Index = () => {
     }
   };
 
-  const handleUpdateHabit = async (id: string, updates: any) => {
+  const handleUpdateHabit = async (id: string, updates: Partial<BaseHabit>) => {
     try {
       await updateHabit(id, updates);
     } catch (error) {
@@ -56,52 +61,8 @@ const Index = () => {
     }
   };
 
-  // Transform habits data for components
-  const transformedHabits = habits.map(habit => {
-    const today = getTodayDateString();
-    const todaysCompletions = habit.completions?.filter(c => c.date === today) || [];
-    const completedDates = habit.completions?.map(c => c.date) || [];
-    
-    return {
-      id: habit.id,
-      title: habit.title,
-      description: habit.description,
-      category: habit.category,
-      color: habit.color,
-      dailyGoal: habit.daily_goal,
-      timeOfDay: habit.time_of_day,
-      completedToday: todaysCompletions.length,
-      completedDates,
-      currentStreak: habit.current_streak,
-      bestStreak: habit.best_streak,
-      createdAt: habit.created_at,
-      completions: habit.completions || []
-    };
-  });
-
-  const calculateStreak = (completedDates: string[]): number => {
-    if (completedDates.length === 0) return 0;
-    
-    const sortedDates = [...completedDates].sort().reverse();
-    const today = getTodayDateString();
-    let streak = 0;
-    let currentDate = new Date(today);
-    
-    for (const dateStr of sortedDates) {
-      const dateToCheck = formatDateString(currentDate.toISOString());
-      if (dateStr === dateToCheck) {
-        streak++;
-        currentDate.setDate(currentDate.getDate() - 1);
-      } else {
-        break;
-      }
-    }
-    
-    return streak;
-  };
-
-  const allCompletedDates = transformedHabits.reduce((dates: string[], habit) => {
-    return [...dates, ...habit.completedDates];
+  const allCompletedDates = habits.reduce((dates: string[], habit) => {
+    return [...dates, ...(habit.completions?.map(c => c.date) || [])];
   }, []);
 
   if (habitsLoading) {
@@ -151,13 +112,13 @@ const Index = () => {
 
       <main className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-3 sm:py-4 md:py-8">
         {/* Stats Overview */}
-        <StatsOverview habits={transformedHabits} />
+        <StatsOverview habits={habits} />
 
         {/* Calendar and Habits */}
         <div className="mt-4 sm:mt-6 md:mt-8 grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
           {/* Calendar */}
           <div className="lg:col-span-1">
-            <HabitCalendar completedDates={allCompletedDates} habits={transformedHabits} />
+            <HabitCalendar completedDates={allCompletedDates} habits={habits} />
           </div>
           
           {/* Habits */}
@@ -170,7 +131,7 @@ const Index = () => {
               </span>
             </div>
 
-            {transformedHabits.length === 0 ? (
+            {habits.length === 0 ? (
               <div className="text-center py-6 sm:py-8 md:py-12">
                 <div className="w-12 h-12 sm:w-16 sm:h-16 md:w-24 md:h-24 bg-gradient-to-r from-emerald-100 to-teal-100 dark:from-emerald-900 dark:to-teal-900 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
                   <Target className="h-6 w-6 sm:h-8 sm:w-8 md:h-12 md:w-12 text-emerald-500 dark:text-emerald-400" />
@@ -186,7 +147,7 @@ const Index = () => {
               </div>
             ) : (
               <div className="grid grid-cols-1 gap-4">
-                {transformedHabits.map(habit => (
+                {habits.map(habit => (
                   <HabitCard
                     key={habit.id}
                     habit={habit}
@@ -202,12 +163,10 @@ const Index = () => {
         </div>
       </main>
 
-      {isAddModalOpen && (
-        <AddHabitModal
-          onClose={() => setIsAddModalOpen(false)}
-          onAdd={handleAddHabit}
-        />
-      )}
+      <AddHabitModal
+        onClose={() => setIsAddModalOpen(false)}
+        onAdd={handleAddHabit}
+      />
     </div>
   );
 };

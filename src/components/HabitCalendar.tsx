@@ -2,19 +2,10 @@ import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { getTodayDateString, formatDateString } from '../utils/date';
+import type { Habit as BaseHabit, HabitCompletion } from '../types';
 
-interface Habit {
-  id: string;
-  title: string;
-  description?: string;
-  category: string;
-  color: string;
-  currentStreak: number;
-  bestStreak: number;
-  completedDates: string[];
-  createdAt: string;
-  dailyGoal: number;
-  timeOfDay: string;
+interface Habit extends BaseHabit {
+  completions: HabitCompletion[];
 }
 
 interface HabitCalendarProps {
@@ -49,8 +40,8 @@ const HabitCalendar: React.FC<HabitCalendarProps> = ({ completedDates, habits, o
     if (habits.length === 0) return false;
     
     return habits.every(habit => {
-      const dayCompletions = habit.completedDates.filter((d: string) => d === dateString).length;
-      return dayCompletions >= habit.dailyGoal;
+      const dayCompletions = habit.completions.filter(c => c.date === dateString).length;
+      return dayCompletions >= habit.daily_goal;
     });
   };
   

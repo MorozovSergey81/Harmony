@@ -2,27 +2,32 @@ import { useState, useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { useLocalStorage } from './useLocalStorage';
 import { getTodayDateString } from '../utils/date';
-import type { Habit, HabitCompletion } from '../types';
+import type { Habit as BaseHabit, HabitCompletion } from '../types';
+
+interface Habit extends BaseHabit {
+  completions: HabitCompletion[];
+}
 
 export const useHabits = () => {
   const [loading, setLoading] = useState(false);
   const [habits, setHabits] = useLocalStorage<Habit[]>('habits', []);
   const [completions, setCompletions] = useLocalStorage<HabitCompletion[]>('habit-completions', []);
 
-  const addHabit = useCallback(async (habitData: Omit<Habit, 'id' | 'created_at' | 'current_streak' | 'best_streak'>) => {
+  const addHabit = useCallback(async (habitData: Omit<BaseHabit, 'id' | 'created_at' | 'current_streak' | 'best_streak'>) => {
     const newHabit: Habit = {
       id: uuidv4(),
       created_at: new Date().toISOString(),
       current_streak: 0,
       best_streak: 0,
-      ...habitData
+      ...habitData,
+      completions: []
     };
 
     setHabits(prev => [...prev, newHabit]);
     return newHabit;
   }, [setHabits]);
 
-  const updateHabit = useCallback(async (id: string, updates: Partial<Habit>) => {
+  const updateHabit = useCallback(async (id: string, updates: Partial<BaseHabit>) => {
     setHabits(prev => prev.map(habit => 
       habit.id === id ? { ...habit, ...updates } : habit
     ));
@@ -81,15 +86,10 @@ export const useHabits = () => {
     }
   }, [habits, setCompletions, updateHabit]);
 
-  const getHabitWithCompletions = useCallback((habit: Habit) => {
-    const habitCompletions = completions.filter(c => c.habit_id === habit.id);
-    return {
-      ...habit,
-      completions: habitCompletions
-    };
-  }, [completions]);
-
-  const habitsWithCompletions = habits.map(getHabitWithCompletions);
+  const habitsWithCompletions = habits.map(habit => ({
+    ...habit,
+    completions: completions.filter(c => c.habit_id === habit.id)
+  }));
 
   return {
     habits: habitsWithCompletions,

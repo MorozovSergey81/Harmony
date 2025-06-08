@@ -1,27 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
+import type { Habit as BaseHabit } from '../types';
 
-interface Habit {
-  id: string;
-  title: string;
-  description?: string;
-  category: string;
-  color: string;
-  currentStreak: number;
-  bestStreak: number;
-  completedDates: string[];
-  createdAt: string;
-  dailyGoal: number;
-  timeOfDay: string;
-  completedToday: number;
+interface Habit extends BaseHabit {
+  completions: Array<{
+    id: string;
+    habit_id: string;
+    date: string;
+    completed_at: string;
+  }>;
 }
 
 interface EditHabitModalProps {
   isOpen: boolean;
   onClose: () => void;
   habit: Habit;
-  onUpdate: (id: string, updates: Partial<Habit>) => void;
+  onUpdate: (id: string, updates: Partial<BaseHabit>) => void;
 }
 
 const colors = [
@@ -56,8 +51,8 @@ const EditHabitModal: React.FC<EditHabitModalProps> = ({ isOpen, onClose, habit,
     description: habit.description || '',
     category: habit.category,
     color: habit.color,
-    dailyGoal: habit.dailyGoal || 1,
-    timeOfDay: habit.timeOfDay || 'anytime'
+    daily_goal: habit.daily_goal || 1,
+    time_of_day: habit.time_of_day || 'anytime'
   });
 
   useEffect(() => {
@@ -66,8 +61,8 @@ const EditHabitModal: React.FC<EditHabitModalProps> = ({ isOpen, onClose, habit,
       description: habit.description || '',
       category: habit.category,
       color: habit.color,
-      dailyGoal: habit.dailyGoal || 1,
-      timeOfDay: habit.timeOfDay || 'anytime'
+      daily_goal: habit.daily_goal || 1,
+      time_of_day: habit.time_of_day || 'anytime'
     });
   }, [habit]);
 
@@ -145,8 +140,8 @@ const EditHabitModal: React.FC<EditHabitModalProps> = ({ isOpen, onClose, habit,
                 {t('timeOfDay')}
               </label>
               <select
-                value={formData.timeOfDay}
-                onChange={(e) => setFormData({ ...formData, timeOfDay: e.target.value })}
+                value={formData.time_of_day}
+                onChange={(e) => setFormData({ ...formData, time_of_day: e.target.value })}
                 className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
               >
                 {timesOfDay.map(time => (
@@ -166,8 +161,8 @@ const EditHabitModal: React.FC<EditHabitModalProps> = ({ isOpen, onClose, habit,
               type="number"
               min="1"
               max="20"
-              value={formData.dailyGoal}
-              onChange={(e) => setFormData({ ...formData, dailyGoal: parseInt(e.target.value) || 1 })}
+              value={formData.daily_goal}
+              onChange={(e) => setFormData({ ...formData, daily_goal: parseInt(e.target.value) || 1 })}
               className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
             />
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">

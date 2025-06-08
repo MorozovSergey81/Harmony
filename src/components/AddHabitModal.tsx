@@ -1,15 +1,9 @@
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
+import type { Habit } from '../types';
 
-interface NewHabit {
-  title: string;
-  description: string;
-  category: string;
-  color: string;
-  dailyGoal: number;
-  timeOfDay: string;
-}
+type NewHabit = Omit<Habit, 'id' | 'created_at' | 'current_streak' | 'best_streak'>;
 
 interface AddHabitModalProps {
   onClose: () => void;
@@ -48,8 +42,8 @@ const AddHabitModal: React.FC<AddHabitModalProps> = ({ onClose, onAdd }) => {
     description: '',
     category: categories[0].value,
     color: colors[0],
-    dailyGoal: 1,
-    timeOfDay: 'anytime'
+    daily_goal: 1,
+    time_of_day: 'anytime'
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -61,8 +55,8 @@ const AddHabitModal: React.FC<AddHabitModalProps> = ({ onClose, onAdd }) => {
         description: '',
         category: categories[0].value,
         color: colors[0],
-        dailyGoal: 1,
-        timeOfDay: 'anytime'
+        daily_goal: 1,
+        time_of_day: 'anytime'
       });
     }
   };
@@ -131,8 +125,8 @@ const AddHabitModal: React.FC<AddHabitModalProps> = ({ onClose, onAdd }) => {
                 {t('timeOfDay')}
               </label>
               <select
-                value={formData.timeOfDay}
-                onChange={(e) => setFormData({ ...formData, timeOfDay: e.target.value })}
+                value={formData.time_of_day}
+                onChange={(e) => setFormData({ ...formData, time_of_day: e.target.value })}
                 className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
               >
                 {timesOfDay.map(time => (
@@ -152,8 +146,8 @@ const AddHabitModal: React.FC<AddHabitModalProps> = ({ onClose, onAdd }) => {
               type="number"
               min="1"
               max="20"
-              value={formData.dailyGoal}
-              onChange={(e) => setFormData({ ...formData, dailyGoal: parseInt(e.target.value) || 1 })}
+              value={formData.daily_goal}
+              onChange={(e) => setFormData({ ...formData, daily_goal: parseInt(e.target.value) || 1 })}
               className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
             />
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">

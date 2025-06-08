@@ -1,17 +1,10 @@
 import React from 'react';
 import { Target, TrendingUp, Calendar, Award } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
+import type { Habit as BaseHabit, HabitCompletion } from '../types';
 
-interface Habit {
-  id: string;
-  title: string;
-  description?: string;
-  category: string;
-  color: string;
-  currentStreak: number;
-  bestStreak: number;
-  completedDates: string[];
-  createdAt: string;
+interface Habit extends BaseHabit {
+  completions: HabitCompletion[];
 }
 
 interface StatsOverviewProps {
@@ -22,10 +15,10 @@ const StatsOverview: React.FC<StatsOverviewProps> = ({ habits }) => {
   const { t } = useLanguage();
   const today = new Date().toISOString().split('T')[0];
   
-  const todayCompleted = habits.filter(h => h.completedDates.includes(today)).length;
+  const todayCompleted = habits.filter(h => h.completions.some(c => c.date === today)).length;
   const totalHabits = habits.length;
-  const totalCompletions = habits.reduce((sum, h) => sum + h.completedDates.length, 0);
-  const longestStreak = habits.reduce((max, h) => Math.max(max, h.bestStreak), 0);
+  const totalCompletions = habits.reduce((sum, h) => sum + h.completions.length, 0);
+  const longestStreak = habits.reduce((max, h) => Math.max(max, h.best_streak), 0);
 
   const completionRate = totalHabits > 0 ? Math.round((todayCompleted / totalHabits) * 100) : 0;
 
