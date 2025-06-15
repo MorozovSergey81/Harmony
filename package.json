@@ -5,12 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "npx vite build",
+    "build": "tsc && vite build",
+    "vercel-build": "npm run build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "test": "vitest",
-    "coverage": "vitest run --coverage",
-    "vercel-build": "npm run build"
+    "coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.1.2",
@@ -46,7 +46,7 @@
     "date-fns": "^3.3.1",
     "embla-carousel-react": "^8.0.0",
     "input-otp": "^1.1.0",
-    "lucide-react": "^0.358.0",
+    "lucide-react": "^0.344.0",
     "next-themes": "^0.2.1",
     "react": "^18.2.0",
     "react-day-picker": "^8.10.0",
@@ -64,22 +64,22 @@
   "devDependencies": {
     "@testing-library/jest-dom": "^6.4.2",
     "@testing-library/react": "^14.2.1",
-    "@types/node": "^20.11.30",
-    "@types/react": "^18.2.64",
-    "@types/react-dom": "^18.2.21",
+    "@types/node": "^20.11.25",
+    "@types/react": "^18.2.56",
+    "@types/react-dom": "^18.2.19",
     "@types/uuid": "^9.0.8",
-    "@typescript-eslint/eslint-plugin": "^7.1.1",
-    "@typescript-eslint/parser": "^7.1.1",
+    "@typescript-eslint/eslint-plugin": "^7.0.2",
+    "@typescript-eslint/parser": "^7.0.2",
     "@vitejs/plugin-react": "^4.2.1",
     "autoprefixer": "^10.4.18",
-    "eslint": "^8.57.0",
+    "eslint": "^8.56.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
     "postcss": "^8.4.35",
     "tailwindcss": "^3.4.1",
-    "terser": "^5.42.0",
+    "terser": "^5.29.2",
     "typescript": "^5.2.2",
-    "vite": "^5.4.19",
+    "vite": "^5.1.4",
     "vitest": "^1.3.1"
   }
 }
