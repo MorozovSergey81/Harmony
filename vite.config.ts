@@ -9,6 +9,7 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     minify: 'terser',
+    sourcemap: true,
     rollupOptions: {
       output: {
         manualChunks: {
@@ -22,13 +23,22 @@ export default defineConfig({
             '@radix-ui/react-toast',
             '@radix-ui/react-tooltip'
           ]
-        }
+        },
+        chunkFileNames: 'assets/[name]-[hash].js',
+        entryFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash].[ext]'
       }
     }
   },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src')
+    }
+  },
+  server: {
+    headers: {
+      'Cache-Control': 'no-cache',
+      'Access-Control-Allow-Origin': '*'
     }
   }
 }) 
