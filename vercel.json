@@ -1,8 +1,13 @@
 {
   "version": 2,
   "framework": "vite",
-  "buildCommand": "npm install && npm run build",
+  "buildCommand": "npm run build",
   "outputDirectory": "dist",
+  "git": {
+    "deploymentEnabled": {
+      "main": true
+    }
+  },
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ]
